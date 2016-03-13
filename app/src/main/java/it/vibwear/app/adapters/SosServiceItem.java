@@ -36,14 +36,18 @@ public class SosServiceItem extends ServiceItem {
                 @Override
                 public void onClick(View v) {
 
-                    if(switchPref.switchState()) {
-                        if (!gpsServiceManager.isEnabled())
-                            showEnableGpsDialog();
+                    switchPref.switchState();
 
-                        GACServiceManager.getInstance(activity).startLocationUpdates();
+                    if(isHardwareSupported(PackageManager.FEATURE_LOCATION_GPS)) {
+                        if (switchPref.getState()) {
+                            if (!gpsServiceManager.isEnabled())
+                                showEnableGpsDialog();
 
-                    } else {
-                        GACServiceManager.getInstance(activity).stopLocationUpdates();
+                            GACServiceManager.getInstance(activity).startLocationUpdates();
+
+                        } else {
+                            GACServiceManager.getInstance(activity).stopLocationUpdates();
+                        }
                     }
 
                     iconWidget.setImageResource(switchPref.getImage());
@@ -92,12 +96,16 @@ public class SosServiceItem extends ServiceItem {
 
 
     public void startLocationUpdates() {
-        if(switchPref.getState())
-            GACServiceManager.getInstance(activity).startLocationUpdates();
+        if(isHardwareSupported(PackageManager.FEATURE_LOCATION_GPS)) {
+            if (switchPref.getState()) {
+                GACServiceManager.getInstance(activity).startLocationUpdates();
+            }
+        }
     }
 
     public void stopLocationUpdates() {
-        GACServiceManager.getInstance(activity).stopLocationUpdates();
+        if(isHardwareSupported(PackageManager.FEATURE_LOCATION_GPS))
+            GACServiceManager.getInstance(activity).stopLocationUpdates();
     }
 
     private void setLocalizedText() {

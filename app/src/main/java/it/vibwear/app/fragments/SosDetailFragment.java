@@ -11,6 +11,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,45 +40,49 @@ public class SosDetailFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		context = container.getContext();
 
 		View sosDetail = inflater.inflate(R.layout.fragment_sos_detail, container, false);
-		ImageButton btSosContacts = (ImageButton)sosDetail.findViewById(R.id.bt_sos_contacts);
-		
+		ImageButton btSosContacts = (ImageButton) sosDetail.findViewById(R.id.bt_sos_contacts);
+
 		btSosContacts.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				  Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-				  startActivityForResult(intent, PICK_CONTACT);
+				Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+				startActivityForResult(intent, PICK_CONTACT);
 			}
 		});
-		
-		ListView lvSosContacts = (ListView)sosDetail.findViewById(R.id.lv_sos_contacts);
+
+		ListView lvSosContacts = (ListView) sosDetail.findViewById(R.id.lv_sos_contacts);
 
 		sosPreference = new SosPreference(context);
-		
+
 		List<Contact> contacts = sosPreference.getContacts();
-		
+
 		adapter = new ContactListAdapter(container.getContext(), contacts);
 
-	    lvSosContacts.setAdapter(adapter);
-		
-		etSosMsg = (EditText)sosDetail.findViewById(R.id.et_sos_msg);
-		
+		lvSosContacts.setAdapter(adapter);
+
+		etSosMsg = (EditText) sosDetail.findViewById(R.id.et_sos_msg);
+
 		etSosMsg.setText(sosPreference.getSosMessage());
 
-        CheckBox cbMyPosition = (CheckBox)sosDetail.findViewById(R.id.cb_my_position);
+		CheckBox cbMyPosition = (CheckBox) sosDetail.findViewById(R.id.cb_my_position);
 
-        cbMyPosition.setChecked(sosPreference.getMyPositionPref());
+		cbMyPosition.setChecked(sosPreference.getMyPositionPref());
 
-        cbMyPosition.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				sosPreference.setMyPositionPref(isChecked);
-            }
-        });
+		if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
+			cbMyPosition.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					sosPreference.setMyPositionPref(isChecked);
+				}
+			});
+		} else {
+			cbMyPosition.setEnabled(false);
+		}
 
         setListViewHeightBasedOnChildren(lvSosContacts);
 
