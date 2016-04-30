@@ -2,6 +2,7 @@ package it.vibwear.app.audio;
 
 import android.util.Log;
 
+import it.vibwear.app.audio.util.AudioUtil;
 import it.vibwear.app.utils.AudioPreference;
 
 /**
@@ -62,14 +63,15 @@ public class LoudNoiseDetector implements AudioClipListener
         boolean heard = false;
         // use rms to take the entire audio signal into account
         // and discount any one single high amplitude
-        double currentVolume = rootMeanSquared(data);
+        double currentVolume = AudioUtil.rootMeanSquared(data);
+
         if (DEBUG)
         {
             Log.d(TAG, "current: " + currentVolume + " threshold: "
-                    + audioPref.getTreshold());
+                    + audioPref.getThreshold());
         }
 
-        if (currentVolume > audioPref.getTreshold())
+        if (currentVolume > audioPref.getThreshold())
         {
             Log.d(TAG, "heard");
             heard = true;
@@ -78,14 +80,4 @@ public class LoudNoiseDetector implements AudioClipListener
         return heard;
     }
 
-    private double rootMeanSquared(short[] nums)
-    {
-        double ms = 0;
-        for (int i = 0; i < nums.length; i++)
-        {
-            ms += nums[i] * nums[i];
-        }
-        ms /= nums.length;
-        return Math.sqrt(ms);
-    }
 }

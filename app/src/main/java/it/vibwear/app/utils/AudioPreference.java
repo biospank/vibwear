@@ -42,14 +42,14 @@ public class AudioPreference implements MicPreference, VibrationPreference, Swit
 
     }
 
-    public int getTreshold() {
+    public int getThreshold() {
         SharedPreferences settings = context.getSharedPreferences(AUDIO_PREFS_NAME,
                 Context.MODE_PRIVATE);
         return settings.getInt(AUDIO_TRESHOLD, DEFAULT_TRESHOLD);
 
     }
 
-    public void setTreshold(int progress) {
+    public void setThreshold(int progress) {
         SharedPreferences.Editor editor;
         SharedPreferences settings = context.getSharedPreferences(AUDIO_PREFS_NAME,
                 Context.MODE_PRIVATE);

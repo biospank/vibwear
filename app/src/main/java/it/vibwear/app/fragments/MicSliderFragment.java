@@ -31,7 +31,7 @@ public class MicSliderFragment extends Fragment {
 
         sbAudio = (SeekBar)layout.findViewById(R.id.sbAudio);
 
-        sbAudio.setProgress(audioPreference.getTreshold());
+        sbAudio.setProgress(audioPreference.getThreshold());
 
         sbAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -51,7 +51,7 @@ public class MicSliderFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
 
-                audioPreference.setTreshold(progress);
+                audioPreference.setThreshold(progress);
             }
         });
 
