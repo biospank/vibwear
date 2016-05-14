@@ -112,24 +112,29 @@ public class ChatServiceItem extends ServiceItem {
         String lang = Locale.getDefault().getLanguage();
 
         if(lang == "en") {
-            if (!ChatNotificationService.isAccessibilitySettingsOn(activity)) {
-                textWidget.setText(VibWearUtil.getChatSummarySpanText(activity.getResources().getString(R.string.chatServiceDesc)));
-                if (switchPref.getState()) {
-                    switchPref.switchState();
-                }
+            if (isAccessibilityOn()) {
+				textWidget.setText(VibWearUtil.getChatSummarySpanText(switchPref.getLabel()));
             } else {
-                textWidget.setText(VibWearUtil.getChatSummarySpanText(switchPref.getLabel()));
+				textWidget.setText(VibWearUtil.getChatSummarySpanText(activity.getResources().getString(R.string.chatServiceDesc)));
+				if (switchPref.getState()) {
+					switchPref.switchState();
+				}
             }
         } else {
-            if (!ChatNotificationService.isAccessibilitySettingsOn(activity)) {
-                textWidget.setText(activity.getResources().getString(R.string.chatServiceDesc));
-                if (switchPref.getState()) {
-                    switchPref.switchState();
-                }
+            if (isAccessibilityOn()) {
+				textWidget.setText(switchPref.getLabel());
             } else {
-                textWidget.setText(switchPref.getLabel());
+				textWidget.setText(activity.getResources().getString(R.string.chatServiceDesc));
+				if (switchPref.getState()) {
+					switchPref.switchState();
+				}
             }
         }
     }
+
+	private boolean isAccessibilityOn() {
+		return (ChatNotificationService.isAccessibilitySettingsOn(activity)) &&
+				(ChatNotificationService.isVibwearAccessibilityServiceOn(activity));
+	}
 
 }

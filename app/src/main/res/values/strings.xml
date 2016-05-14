@@ -66,6 +66,7 @@ contact MbientLab Inc, at www.mbientlab.com.
 
     <string name="accessibility_dialog_title">Accessibility</string>
     <string name="accessibility_dialog_msg">VibWear accessibility is not enabled.\nEnable VibWear to receive notification events?</string>
+    <string name="accessibility_conflicts_dialog_msg">Other accessibility services are enabled.\nPlease make sure VibWear is the only service enabled.</string>
 
     <string name="callServiceDesc">Call alert off!</string>
     <string name="smsServiceDesc">Sms alert off!</string>

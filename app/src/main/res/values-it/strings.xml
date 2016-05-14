@@ -67,7 +67,8 @@ contact MbientLab Inc, at www.mbientlab.com.
 
     <string name="accessibility_dialog_title">Accessibilità</string>
     <string name="accessibility_dialog_msg">Vuoi abilitare VibWear per ricevere notifiche?</string>
-    
+    <string name="accessibility_conflicts_dialog_msg">Altri servizi sono abilitati per l\'accessibilità.\nAssicurarsi che VibWear sia l\'unico servizio attivo.</string>
+
     <string name="callServiceDesc">Chiamate non attivo!</string>
     <string name="smsServiceDesc">Sms non attivo!</string>
     <string name="chatServiceDesc">Chat non attivo!</string>

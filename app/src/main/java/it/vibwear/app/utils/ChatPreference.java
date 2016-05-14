@@ -55,22 +55,38 @@ public class ChatPreference implements VibrationPreference, SwitchPreference {
 
 		} else {
 			
-			if (! ChatNotificationService.isAccessibilitySettingsOn(context)) {
-				new AlertDialog.Builder(context)
-				.setTitle(R.string.accessibility_dialog_title)
-				.setMessage(R.string.accessibility_dialog_msg)
-				.setIcon(R.drawable.ic_launcher)
-				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+			if (isAccessibilityOn()) {
 
-				    public void onClick(DialogInterface dialog, int whichButton) {
-						context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-				    }})
-				    
-				 .setNegativeButton(android.R.string.no, null).show();
-				
-	        } else {
-				editor.putBoolean(CHAT_KEY_PREF, true);
-				active = true;
+                if(ChatNotificationService.hasAccessibilityConflicts(context)) {
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.accessibility_dialog_title)
+                            .setMessage(R.string.accessibility_conflicts_dialog_msg)
+                            .setIcon(R.drawable.ic_launcher)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                                }})
+
+                            .setNegativeButton(android.R.string.no, null).show();
+
+                } else {
+                    editor.putBoolean(CHAT_KEY_PREF, true);
+                    active = true;
+                }
+
+            } else {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.accessibility_dialog_title)
+                        .setMessage(R.string.accessibility_dialog_msg)
+                        .setIcon(R.drawable.ic_launcher)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                context.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                            }})
+
+                        .setNegativeButton(android.R.string.no, null).show();
 
 	        }
 
@@ -119,6 +135,10 @@ public class ChatPreference implements VibrationPreference, SwitchPreference {
 		else
 			return R.drawable.ic_chat;
 	}
-	
+
+    private boolean isAccessibilityOn() {
+        return (ChatNotificationService.isAccessibilitySettingsOn(context)) &&
+                (ChatNotificationService.isVibwearAccessibilityServiceOn(context));
+    }
 
 }

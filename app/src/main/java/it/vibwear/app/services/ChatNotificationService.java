@@ -13,13 +13,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
 public class ChatNotificationService extends AccessibilityService {
-	
-//	private OnChatServiceListener listener;
-//
-//	public ChatNotificationService(OnChatServiceListener listener) {
-//		  this.listener = listener;
-//		
-//	}
+
+    static final String vibwearAccessibilityService = "it.lampwireless.vibwear.app/it.vibwear.app.services.ChatNotificationService";
 
 	@Override
 	public void onAccessibilityEvent(AccessibilityEvent evt) {
@@ -47,25 +42,6 @@ public class ChatNotificationService extends AccessibilityService {
 	    // package names here.  Otherwise, when the service is activated, it will listen
 	    // to events from all applications.
 	    
-	    // tango = com.sgiggle.production
-	    // wechat = com.tencent.mm
-	    // line = jp.naver.line.android
-	    
-//	    info.packageNames = new String[] {
-//    		"com.whatsapp", 
-//    		"com.skype.rider", 
-//    		"com.viber.voip", 
-//    		"com.sgiggle.production", 
-//    		"com.tencent.mm", 
-//    		"jp.naver.line.android", 
-//    		"com.facebook.orca", 
-//    		"com.oovoo",
-//    		"com.vpho",
-//    		"com.twitter.android",
-//    		"com.camshare.camfrog.android",
-//	    	"com.imo.android.imoim"
-//	    };
-
 	    // Set the type of feedback your service will provide.
 	    info.feedbackType = AccessibilityServiceInfo.FEEDBACK_ALL_MASK;
 
@@ -86,43 +62,78 @@ public class ChatNotificationService extends AccessibilityService {
 	// To check if service is enabled
 	public static boolean isAccessibilitySettingsOn(Context mContext) {
         int accessibilityEnabled = 0;
-//        String TAG = "VibWear";
-        final String service = "it.lampwireless.vibwear.app/it.vibwear.app.services.ChatNotificationService";
-        boolean accessibilityFound = false;
+
         try {
             accessibilityEnabled = Settings.Secure.getInt(
                     mContext.getApplicationContext().getContentResolver(),
                     android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
-//            Log.v(TAG, "accessibilityEnabled = " + accessibilityEnabled);
         } catch (SettingNotFoundException e) {
-//            Log.e(TAG, "Error finding setting, default accessibility to not found: " + e.getMessage());
+            return false;
         }
-        TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
 
-        if (accessibilityEnabled == 1) {
-//            Log.v(TAG, "***ACCESSIBILIY IS ENABLED*** -----------------");
-            String settingValue = Settings.Secure.getString(
-                    mContext.getApplicationContext().getContentResolver(),
-                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-            if (settingValue != null) {
-                TextUtils.SimpleStringSplitter splitter = mStringColonSplitter;
-                splitter.setString(settingValue);
-                while (splitter.hasNext()) {
-                    String accessabilityService = splitter.next();
+        return (accessibilityEnabled == 1) ? true : false;
+    }
 
-//                    Log.v(TAG, "-------------- > accessabilityService :: " + accessabilityService);
-//                    Toast.makeText(mContext, accessabilityService, Toast.LENGTH_LONG);
-                    if (accessabilityService.equalsIgnoreCase(service)) {
-//                        Log.v(TAG, "We've found the correct setting - accessibility is switched on!");
-                        return true;
-                    }
+    public static boolean isVibwearAccessibilityServiceOn(Context mContext) {
+        return findVibwearAccessibilityService(getEnabledAccessibilityServices(mContext));
+    }
+
+    public static boolean hasAccessibilityConflicts(Context mContext) {
+        String enabledServices = getEnabledAccessibilityServices(mContext);
+
+        String conflictService = findConflictAccessibilityService(enabledServices);
+
+        return (conflictService != null) ? true : false;
+    }
+
+    private static String getEnabledAccessibilityServices(Context mContext) {
+        return Settings.Secure.getString(
+                mContext.getApplicationContext().getContentResolver(),
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+    }
+
+    private static boolean findVibwearAccessibilityService(String enabledServices) {
+        if ((enabledServices != null) && (!enabledServices.isEmpty())) {
+            TextUtils.SimpleStringSplitter splitter = getServiceSplitterFor(enabledServices);
+
+            while (splitter.hasNext()) {
+                String accessabilityService = splitter.next();
+
+                if (accessabilityService.equalsIgnoreCase(vibwearAccessibilityService)) {
+                    return true;
                 }
             }
-        } else {
-//            Log.v(TAG, "***ACCESSIBILIY IS DISABLED***");
-        }
 
-        return accessibilityFound;      
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    private static String findConflictAccessibilityService(String enabledServices) {
+        if ((enabledServices != null) && (!enabledServices.isEmpty())) {
+            TextUtils.SimpleStringSplitter splitter = getServiceSplitterFor(enabledServices);
+
+            while (splitter.hasNext()) {
+                String accessabilityService = splitter.next();
+
+                if (!accessabilityService.equalsIgnoreCase(vibwearAccessibilityService)) {
+                    return accessabilityService;
+                }
+            }
+
+            return null;
+        } else {
+            return null;
+        }
+    }
+
+    private static TextUtils.SimpleStringSplitter getServiceSplitterFor(String enabledServices) {
+        TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
+        TextUtils.SimpleStringSplitter splitter = mStringColonSplitter;
+        splitter.setString(enabledServices);
+
+        return splitter;
     }
 	
 }
